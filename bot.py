@@ -1,16 +1,31 @@
 import asyncio
 import logging
+import os
+import django
+
+
+os.environ.setdefault(
+    'DJANGO_SETTINGS_MODULE', 'admin.django_admin.settings'
+)
+os.environ.update({'DJANGO_ALLOW_ASYNC_UNSAFE': 'true'})
+django.setup()
+
 
 from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.contrib.fsm_storage.redis import RedisStorage2
-
+from tgbot.handlers.menu import register_start_menu
+from tgbot.handlers.weight_of_pet import register_weight_menu
+from tgbot.handlers.list_of_groomer_services import register_list_of_services_for_groomer
+from tgbot.handlers.list_of_vet_services import register_list_of_services_for_vet
+from tgbot.handlers.select_date import register_calendar
+from tgbot.handlers.my_appointment import register_my_appointment
+from tgbot.handlers.employers_handler import register_employer_calendar
 from tgbot.config import load_config
 from tgbot.filters.admin import AdminFilter
-from tgbot.handlers.admin import register_admin
-from tgbot.handlers.echo import register_echo
-from tgbot.handlers.user import register_user
+from tgbot.handlers.start import register_user
 from tgbot.middlewares.environment import EnvironmentMiddleware
+
 
 logger = logging.getLogger(__name__)
 
@@ -24,13 +39,18 @@ def register_all_filters(dp):
 
 
 def register_all_handlers(dp):
-    register_admin(dp)
+    register_start_menu(dp)
     register_user(dp)
-
-    register_echo(dp)
+    register_weight_menu(dp)
+    register_list_of_services_for_groomer(dp)
+    register_list_of_services_for_vet(dp)
+    register_calendar(dp)
+    register_my_appointment(dp)
+    register_employer_calendar(dp)
 
 
 async def main():
+
     logging.basicConfig(
         level=logging.INFO,
         format=u'%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s',
@@ -47,6 +67,7 @@ async def main():
     register_all_middlewares(dp, config)
     register_all_filters(dp)
     register_all_handlers(dp)
+
 
     # start
     try:

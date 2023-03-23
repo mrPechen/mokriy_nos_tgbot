@@ -10,7 +10,7 @@ from tgbot.services.db_commands import vet_groomer_category_count
 callback_employer_calendar = CallbackData('callback_employer_calendar', 'act', 'year', 'month', 'day')
 
 
-async def employer_calendar_list(year: int = datetime.now().year, month: int = datetime.now().month):
+async def employee_calendar_list(year: int = datetime.now().year, month: int = datetime.now().month):
     ignore_callback = callback_employer_calendar.new("IGNORE", year, month, 0)
     markup = InlineKeyboardMarkup(row_width=7)
     markup.row()

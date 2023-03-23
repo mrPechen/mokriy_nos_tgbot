@@ -37,7 +37,7 @@ async def back_to_employers_category(call: CallbackQuery):
 
 
 def register_employer_calendar(dp: Dispatcher):
-    dp.register_callback_query_handler(show_category, callback_start_menu.filter(key='employer_calendar'))
+    dp.register_callback_query_handler(show_category, callback_start_menu.filter(act='employer_calendar'))
     dp.register_callback_query_handler(show_employer_calendar, callback_employer_category.filter(act='get_empl_calendar'))
     dp.register_callback_query_handler(show_appointment_by_day, callback_employer_calendar.filter(act='DAY'))
     dp.register_callback_query_handler(back_to_employers_category, callback_employer_category.filter(act='back_to_category'))

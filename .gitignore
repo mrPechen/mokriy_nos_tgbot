@@ -61,3 +61,8 @@ venv.bak/
 .pyre/
 .idea/*
 .env
+
+misc/
+models/
+middlewares/
+admin/django_admin/settings.py

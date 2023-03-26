@@ -16,11 +16,27 @@ class User(models.Model):
         return f"User id: {self.id} ({self.user_id} - {self.name})"
 
 
+class Employee(models.Model):
+    class Meta:
+        verbose_name = 'Сотрудник'
+        verbose_name_plural = 'Сотрудники'
+
+    name = models.CharField(max_length=100, verbose_name="Имя сотрудника")
+    break_time_start = models.TimeField(verbose_name='Время начала перерыва', null=True)
+    break_time_end = models.TimeField(verbose_name='Время окончания перерыва', null=True)
+    vacation_date_start = models.DateField(verbose_name='Дата начала отпуска или отгула', blank=True, null=True)
+    vacation_date_end = models.DateField(verbose_name='Дата выхода сотрудника на работу', blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Category(models.Model):
     class Meta:
-        verbose_name = "Категория"
-        verbose_name_plural = "Категории"
-    name = models.CharField(max_length=100, verbose_name="Название услуги")
+        verbose_name = "Специализация сотрудника"
+        verbose_name_plural = "Специализация сотрудников"
+    name = models.CharField(max_length=100, verbose_name="Специализация сотрудника")
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, verbose_name='Имя сотрудника', null=True)
 
     def __str__(self):
         return self.name
@@ -44,15 +60,12 @@ class Service(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(verbose_name="Название услуги", max_length=50)
     price = models.CharField(verbose_name="Цена", max_length=50)
-    description = models.TextField(verbose_name="Описание", null=True)
+    description = models.TextField(verbose_name="Описание", blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     weight = models.ForeignKey(Weight, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
-
-
-
 
 
 class Registration(models.Model):

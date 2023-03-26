@@ -87,6 +87,7 @@ DATABASES = {
         'PASSWORD': env.str("DB_PASS"),
         'HOST': env.str("DB_HOST"),
         'PORT': '5432',
+
     }
 }
 
@@ -115,7 +116,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ru-ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 

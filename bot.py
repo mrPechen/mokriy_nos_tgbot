@@ -16,11 +16,10 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.contrib.fsm_storage.redis import RedisStorage2
 from tgbot.handlers.menu import register_start_menu
 from tgbot.handlers.weight_of_pet import register_weight_menu
-from tgbot.handlers.list_of_groomer_services import register_list_of_services_for_groomer
-from tgbot.handlers.list_of_vet_services import register_list_of_services_for_vet
+from tgbot.handlers.list_of_services import register_list_of_services
 from tgbot.handlers.select_date import register_calendar
 from tgbot.handlers.my_appointment import register_my_appointment
-from tgbot.handlers.employers_handler import register_employer_calendar
+from tgbot.handlers.employees_handler import register_employees_calendar
 from tgbot.config import load_config
 from tgbot.filters.admin import AdminFilter
 from tgbot.handlers.start import register_user
@@ -42,11 +41,10 @@ def register_all_handlers(dp):
     register_start_menu(dp)
     register_user(dp)
     register_weight_menu(dp)
-    register_list_of_services_for_groomer(dp)
-    register_list_of_services_for_vet(dp)
+    register_list_of_services(dp)
     register_calendar(dp)
     register_my_appointment(dp)
-    register_employer_calendar(dp)
+    register_employees_calendar(dp)
 
 
 async def main():

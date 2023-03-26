@@ -1,8 +1,7 @@
-
-from aiogram import Dispatcher, Bot, types
+from aiogram import Dispatcher, Bot
 from aiogram.types import CallbackQuery
 from datetime import date
-from tgbot.keyboards.reply import action_with_appointments, callback_appointments, callback_start_menu, \
+from tgbot.keyboards.inline import action_with_appointments, callback_appointments, callback_start_menu, \
     button_list_for_cancel, callback_button_list_for_cancel
 from tgbot.services.db_commands import show_my_appointments, cancel_appointments, get_service
 from tgbot.config import load_config
@@ -57,11 +56,13 @@ async def cancel_appointment(call: CallbackQuery, callback_data: dict):
                                    f'\n'
                                    f'Для возврата в главное меню нажмите /menu')
     for admin in config.admin_ids:
-        await Bot.send_message(bot, chat_id=admin, text=f"Отмена записи!\n"
+        session = await Bot.get_session(bot)
+        await Bot.send_message(bot, chat_id=admin, text=f"\u274C ОТМЕНА ЗАПИСИ!\n"
                                                         f"Клиент: {call.from_user.full_name}\n"
                                                         f"Услуга: {service.name}\n"
                                                         f"Дата: {dates}\n"
                                                         f"Время: {times[:-3]}")
+        await session.close()
 
 
 async def back_to_my_appointments(call: CallbackQuery):
@@ -69,10 +70,10 @@ async def back_to_my_appointments(call: CallbackQuery):
 
 
 def register_my_appointment(dp: Dispatcher):
-    dp.register_callback_query_handler(my_appointments, callback_start_menu.filter(key='appointment'))
-    dp.register_callback_query_handler(show_appointment, callback_appointments.filter(key='show_appointments'))
-    dp.register_callback_query_handler(list_for_cancel_appointment, callback_appointments.filter(key='cancel_appointments'))
+    dp.register_callback_query_handler(my_appointments, callback_start_menu.filter(act='appointment'))
+    dp.register_callback_query_handler(show_appointment, callback_appointments.filter(act='show_appointments'))
+    dp.register_callback_query_handler(list_for_cancel_appointment, callback_appointments.filter(act='cancel_appointments'))
     dp.register_callback_query_handler(cancel_appointment, callback_button_list_for_cancel.filter(act='delete'))
-    dp.register_callback_query_handler(back_to_my_appointments, callback_appointments.filter(key='back_to_appointments'))
+    dp.register_callback_query_handler(back_to_my_appointments, callback_appointments.filter(act='back_to_appointments'))
 
 

@@ -1,17 +1,17 @@
 from aiogram import Dispatcher
 from aiogram.types import CallbackQuery
-from datetime import date
-from tgbot.keyboards.calendar_for_employer import employer_calendar_list, callback_employer_calendar
-from tgbot.keyboards.reply import employer_category, callback_employer_category, callback_start_menu
+from datetime import date, datetime, timedelta
+from tgbot.keyboards.calendar_for_employees import employee_calendar_list, callback_employees_calendar
+from tgbot.keyboards.inline import employees_category, callback_employees_category, callback_start_menu
 from tgbot.services.db_commands import vet_groomer_category_filter
 
 
 async def show_category(call: CallbackQuery):
-    await call.message.edit_reply_markup(reply_markup=await employer_category())
+    await call.message.edit_reply_markup(reply_markup=await employees_category())
 
 
-async def show_employer_calendar(call: CallbackQuery):
-    await call.message.edit_reply_markup(reply_markup=await employer_calendar_list())
+async def show_employees_calendar(call: CallbackQuery):
+    await call.message.edit_reply_markup(reply_markup=await employee_calendar_list())
 
 
 async def show_appointment_by_day(call: CallbackQuery, callback_data: dict):
@@ -32,12 +32,31 @@ async def show_appointment_by_day(call: CallbackQuery, callback_data: dict):
     await call.answer(cache_time=0)
 
 
-async def back_to_employers_category(call: CallbackQuery):
-    await call.message.edit_reply_markup(reply_markup=await employer_category())
+async def employees_prev_month(call: CallbackQuery, callback_data: dict):
+    temp_date = datetime(year=int(callback_data['year']), month=int(callback_data['month']), day=1)
+    prev_date = temp_date - timedelta(days=1)
+    await call.message.edit_reply_markup(reply_markup=await employee_calendar_list(year=int(prev_date.year),
+                                                                                   month=int(prev_date.month)))
 
 
-def register_employer_calendar(dp: Dispatcher):
-    dp.register_callback_query_handler(show_category, callback_start_menu.filter(act='employer_calendar'))
-    dp.register_callback_query_handler(show_employer_calendar, callback_employer_category.filter(act='get_empl_calendar'))
-    dp.register_callback_query_handler(show_appointment_by_day, callback_employer_calendar.filter(act='DAY'))
-    dp.register_callback_query_handler(back_to_employers_category, callback_employer_category.filter(act='back_to_category'))
+async def employees_next_month(call: CallbackQuery, callback_data: dict):
+    year = int(callback_data['year'])
+    month = int(callback_data['month'])
+    next_year = year + 1 if month == 12 else year
+    next_month = month % 12 + 1
+    await call.message.edit_reply_markup(reply_markup=await employee_calendar_list(year=next_year,
+                                                                                   month=next_month))
+
+
+async def back_to_employees_category(call: CallbackQuery):
+    await call.message.edit_reply_markup(reply_markup=await employees_category())
+
+
+def register_employees_calendar(dp: Dispatcher):
+    dp.register_callback_query_handler(show_category, callback_start_menu.filter(act='employees_calendar'))
+    dp.register_callback_query_handler(show_employees_calendar, callback_employees_category.filter(act='get_empl_calendar'))
+    dp.register_callback_query_handler(show_appointment_by_day, callback_employees_calendar.filter(act='day'))
+    dp.register_callback_query_handler(employees_prev_month, callback_employees_calendar.filter(act='prev_month'))
+    dp.register_callback_query_handler(back_to_employees_category, callback_employees_category.filter(act='back_to_category'))
+    dp.register_callback_query_handler(employees_next_month, callback_employees_calendar.filter(act='next_month'))
+
